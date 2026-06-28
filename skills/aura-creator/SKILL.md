@@ -50,6 +50,7 @@ If any check fails, fix the script rather than shipping the file.
 - Prefer a readable layer layout: name effect layers after the device or device group they target, and keep a `Base - 常亮底色` / `Base - Constant` static layer at the bottom for the always-on color.
 - Preserve each layer's complete device binding list when possible. For whole-device selection, keep the device node and set `<index>-1</index>`; for unselected devices, keep the device node with no `index`; for keyboard key regions, preserve the explicit key indexes.
 - A constant Base layer must begin at timeline `0` and run through the full project duration; do not leave inherited starts such as `3000` unless the user explicitly asks for delayed base lighting.
+- For dual-color Breathing or Flash, use `colormodeselection=4`; set primary `r/g/b` and `d1*` to the first color, and `d2*` to the second color.
 - Treat these effect types as known:
   - `0` Static, inferred from UI order
   - `1` Breathing, inferred from UI order

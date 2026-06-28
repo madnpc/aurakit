@@ -12,7 +12,7 @@ Known base effects:
 | 1 | Breathing | Can be random color or gradient depending on `colormodeselection`. |
 | 2 | Color Cycle | Observed as a normal timeline segment. |
 | 3 | Rainbow | Observed as a normal timeline segment. |
-| 4 | Flash | Observed as random color when `colormodeselection=2`. |
+| 4 | Flash | Can be random color or dual color depending on `colormodeselection`. |
 | 5 | Comet | Verified earlier; observed as a normal timeline segment. |
 | 6 | Starry Night | Observed as a normal timeline segment. |
 | 7 | Tide | Verified earlier; observed as a normal timeline segment. |
@@ -30,6 +30,7 @@ Observed `colormodeselection` values:
 | ---: | --- | --- |
 | 1 | Fixed / normal color mode | Primary `r/g/b` drives simple static and motion effects. Keep `colorPointList` and `gradientPointList` shape intact unless editing those modes intentionally. |
 | 2 | Random color mode | Observed on Breathing and Flash segments. Preserve this value for random-color behavior. |
+| 4 | Dual color mode | Observed on Breathing (`type=1`) and Flash (`type=4`) in `/Users/liam/Downloads/SaveFile.xml`. Use `d1r/d1g/d1b` for the first color and `d2r/d2g/d2b` for the second color. Keep primary `r/g/b` aligned with the first color for UI consistency. |
 | 6 | Gradient mode | Observed on Static gradient and Breathing gradient segments. Edit `gradientPointList` colors to change the gradient; preserve point count and coordinates unless intentionally changing the spatial spread. |
 
 `colorPointList` and `gradientPointList` are present on every observed effect, even when a mode does not visibly use both. Treat absent visual use as inactive defaults, not permission to delete the lists.
@@ -64,4 +65,15 @@ For gradient effects:
 - Preserve `gradientPointList` element count.
 - Prefer editing `r/g/b` inside each `gradientPoint`; leave `x/y` coordinates intact unless the user asks to move the gradient.
 - Keep `gradientDegreeOfDiffusion`, `patternSelect`, `rotationMode`, and `rainbowRotation` unchanged unless testing proves a different value imports correctly.
+
+## Dual Color Editing
+
+For dual-color Breathing or Flash:
+
+- Use `type=1` for Breathing or `type=4` for Flash.
+- Set `colormodeselection=4`.
+- Set primary `r/g/b` to the first color.
+- Set `d1r/d1g/d1b` to the first color.
+- Set `d2r/d2g/d2b` to the second color.
+- Preserve `colorPointList` and `gradientPointList`; they remain present in exported XML even when dual-color mode is active.
 

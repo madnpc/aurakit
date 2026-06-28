@@ -15,13 +15,14 @@ AuraKit is an early-stage project. The parser, XML editing helpers, preview rend
 - Tested primarily against the included fixture and limited exported projects.
 - Unknown XML nodes are preserved wherever possible.
 - XML is generated for manual import into Aura Creator, not direct device control.
-- Effect type mapping is partially verified: `5 = Comet` and `7 = Tide` are confirmed from exports; other values are documented as inferred until more fixtures are available.
+- Effect type mapping is partially verified from exports, including `5 = Comet`, `7 = Tide`, and signal-sync types `11` through `13`.
+- Aura Creator binding and color-mode rules are treated as fixture-backed research data; exported XML remains the source of truth.
 
 ## Features
 
 - Parse Aura Creator XML into a document plus typed summaries for devices and layers.
 - Preserve the exported XML structure while mutating known scalar fields.
-- Remove matched devices from layer bindings, for example disabling keyboard participation without deleting the device catalog entry.
+- Preserve Aura Creator device selection state, including `index=-1` whole-device bindings and explicit keyboard key indexes.
 - Apply a soft Ocean preset through the TypeScript API.
 - Generate Ocean, Galaxy, and Aurora themed XML through the bundled helper script.
 - Preview theme behavior locally as animated LED strips in the browser.
@@ -125,15 +126,28 @@ Aura Creator stores built-in effects as numeric XML values. AuraKit currently tr
 | XML type | Chinese UI | Effect | Status |
 | ---: | --- | --- | --- |
 | 0 | 恒亮 | Static | Inferred from UI order |
-| 1 | 呼吸 | Breathing | Inferred from UI order |
+| 1 | 呼吸 | Breathing | Inferred from UI order; dual-color mode verified |
 | 2 | 彩色循环 | Color Cycle | Inferred from UI order |
 | 3 | 彩虹 | Rainbow | Inferred from UI order |
-| 4 | 闪烁 | Flash | Inferred from UI order |
+| 4 | 闪烁 | Flash | Inferred from UI order; dual-color mode verified |
 | 5 | 彗星 | Comet | Verified from exported timeline |
 | 6 | 繁星 | Starry Night | Inferred from UI order |
 | 7 | 潮汐 | Tide | Verified from exported timeline |
+| 11 | 音乐 | Music signal sync | Verified from exported fixture |
+| 12 | 智能 | Smart signal sync | Verified from exported fixture |
+| 13 | 同步变色 | Synchronized color change | Verified from exported fixture |
 
 See [docs/effect-types.md](docs/effect-types.md) for verification notes.
+
+## XML Binding And Color Notes
+
+Aura Creator layer device bindings are selection state. Keep the top-level `<space>` catalog intact, and prefer preserving each layer's full `<devices>` list:
+
+- `<index>-1</index>` selects a whole non-keyboard device for that layer.
+- A device node with no `index` is present but not selected.
+- Keyboard regions use explicit key indexes.
+
+Observed color modes include `1` for normal/fixed color, `2` for random color, `4` for dual-color Breathing/Flash, and `6` for gradient. Dual-color Breathing and Flash use `d1r/d1g/d1b` and `d2r/d2g/d2b`; keep primary `r/g/b` aligned with the first color. See [skills/aura-creator/references/effect-patterns.md](skills/aura-creator/references/effect-patterns.md) for the agent-facing rules.
 
 ## Agent Skill
 

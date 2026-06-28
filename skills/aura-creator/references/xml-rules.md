@@ -71,6 +71,7 @@ The generator parses with `attributeNamePrefix: "@_"`, so attributes become keys
 - Keep signal-sync effects (`type=11`, `12`, `13`) as single-effect layers. They are not normal multi-segment timeline layers.
 - Multi-segment normal layers may contain multiple `<effect>` nodes. Preserve their order and `start`/`duration` sequence unless intentionally editing the timeline.
 - Preserve `colorPointList` and `gradientPointList` node counts. For gradient mode, prefer editing existing point colors over adding/removing points.
+- For dual-color Breathing/Flash, use `colormodeselection=4`, set `d1*` and `d2*` to the two colors, and keep primary `r/g/b` aligned with the first color.
 - If there are no layers, ask the user to export a project with at least one official effect layer.
 - If import fails, revert to fewer edits: first only remove keyboard, then only adjust colors, then effect type/speed.
 
