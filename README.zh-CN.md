@@ -1,34 +1,56 @@
 # AuraKit
 
-AuraKit 是一个用于解析、编辑、预览和生成 ASUS Aura Creator 灯光工程 XML 的 TypeScript 项目。
+AuraKit 是一个用于 AI 辅助生成、预览和导出 ASUS Aura Creator 灯光工程 XML 的 TypeScript 项目。
 
 英文文档: [README.md](README.md)
 
-这个项目的核心思路不是凭空猜 Aura Creator 的私有格式，而是：
+Aura Creator 功能很强，但实际做一个好看的灯效很麻烦：效果藏在面板里，时间轴调起来费劲，每改一次都要手动试。AuraKit 的目标就是把这件事变简单。
 
-1. 用户先从 Aura Creator 导出真实 XML 工程。
-2. AuraKit 保留原始 XML 结构，只修改已知字段。
-3. 生成新的 XML。
-4. 用户手动导入 Aura Creator 验证。
-5. AI 根据用户反馈继续调整。
+推荐工作流：
 
-## 项目定位
+1. 从 Aura Creator 导出真实 XML 工程。
+2. 让 AI 生成 Ocean、Galaxy、Aurora 之类的主题。
+3. 先在本地浏览器里预览动态灯效。
+4. 导出可导入 Aura Creator 的 XML。
+5. 用户手动导入 Aura Creator。
+6. 把反馈告诉 AI：太亮、太快、设备没亮、键盘被影响、导入失败。
+7. AI 继续生成更好的版本。
 
-本地项目主要负责两件事：
+AuraKit 不会一开始就凭空猜 Aura Creator 的私有结构。它会保留真实导出 XML 的结构，只修改已经知道的字段。
 
-- **预览器**：在浏览器里预览主题效果，比如 Ocean 水流、Galaxy 银河、Aurora 极光。
-- **XML 工具链**：给 SDK、CLI 和 Skill 复用，用来解析、修改、生成 Aura Creator XML。
+## 解决的问题
 
-Skill 更偏产品核心：让 AI 根据自然语言生成好看的灯效 XML，然后通过用户手动导入反馈不断完善。
+- Aura Creator 直接操作复杂，不适合反复调主题。
+- AI 可以把自然语言转换成灯效意图和 XML 修改。
+- 本地预览可以在导入 Aura Creator 前先看效果。
+- 用户手动导入和反馈，让 XML 规则还没完全摸透时也能安全迭代。
 
 ## 当前能力
 
 - 解析 Aura Creator XML，提取设备和图层摘要。
-- 识别已验证灯效类型：`5 = 彗星 / Comet`，`7 = 潮汐 / Tide`。
+- 根据 Aura Creator 截图中的内置效果顺序建立初步 type 映射。
 - 从图层设备绑定里移除键盘，但保留顶层设备列表。
-- 应用柔和 Ocean 预设。
+- 给真实导出的 XML 应用柔和主题预设。
 - 在浏览器里预览动态 LED 灯带。
-- 提供本地 Codex Skill，让 AI 辅助生成 Aura Creator XML。
+- 提供本地 Codex/Agent Skill，让 AI 辅助生成 Aura Creator XML。
+- 序列化修改后的 XML，供用户手动导入。
+
+## 灯效 Type 映射
+
+根据你给的 Aura Creator 截图，内置灯效顺序是：
+
+| XML type | 中文 UI | 英文名 | 可信度 |
+| ---: | --- | --- | --- |
+| 0 | 恒亮 | Static | 根据 UI 顺序推断 |
+| 1 | 呼吸 | Breathing | 根据 UI 顺序推断 |
+| 2 | 彩色循环 | Color Cycle | 根据 UI 顺序推断 |
+| 3 | 彩虹 | Rainbow | 根据 UI 顺序推断 |
+| 4 | 闪烁 | Flash | 根据 UI 顺序推断 |
+| 5 | 彗星 | Comet | 已通过导出 XML 验证 |
+| 6 | 繁星 | Starry Night | 根据 UI 顺序推断 |
+| 7 | 潮汐 | Tide | 已通过导出 XML 验证 |
+
+目前 `5 = 彗星 / Comet`、`7 = 潮汐 / Tide` 已经从导出 XML 确认；其它类型先按截图顺序推断，后面用单图层导出逐个验证。
 
 ## 安装
 
@@ -36,7 +58,7 @@ Skill 更偏产品核心：让 AI 根据自然语言生成好看的灯效 XML，
 pnpm install
 ```
 
-## 浏览器预览
+## 本地预览
 
 ```bash
 pnpm dev
@@ -62,11 +84,7 @@ http://127.0.0.1:5173/
 使用内置 Skill 脚本：
 
 ```bash
-node skills/aura-creator/scripts/generate-aura-xml.mjs \
-  fixtures/minimal-aura-project.xml \
-  Ocean.xml \
-  --theme ocean \
-  --keyboard off
+pnpm skill:generate fixtures/minimal-aura-project.xml Ocean.xml --theme ocean --keyboard off
 ```
 
 支持主题：
@@ -85,13 +103,42 @@ node skills/aura-creator/scripts/generate-aura-xml.mjs \
 
 然后让 AI 继续生成下一版。
 
-## Codex Skill
+## SDK 用法
 
-Skill 位于：
+```ts
+import {
+  applyOceanPreset,
+  parseAuraProject,
+  serializeAuraProject
+} from "aurakit";
+
+const project = parseAuraProject(xml);
+const result = applyOceanPreset(project, {
+  disableKeyboard: true,
+  baseColor: "#24384f",
+  flowColor: "#8eefff",
+  speed: 1,
+  brightness: 2,
+  durationMs: 12000
+});
+
+const nextXml = serializeAuraProject(result.project);
+```
+
+## Skills
+
+本地 Skill 位于：
 
 [skills/aura-creator/SKILL.md](skills/aura-creator/SKILL.md)
 
-使用方式：
+仓库也通过软链接把同一份 Skill 暴露给不同 Agent 工具：
+
+```text
+.claude/skills -> ../skills
+.agents/skills -> ../skills
+```
+
+Skill 工作流：
 
 1. 用户提供 Aura Creator 导出的 XML。
 2. AI 读取 Skill 的 XML 规则和主题配方。
@@ -110,7 +157,9 @@ src/
   preview/            主题模型和动画帧渲染
   presets/ocean.ts    Ocean 预设
 skills/
-  aura-creator/        AI 生成 Aura Creator XML 的 Codex Skill
+  aura-creator/        AI 生成 Aura Creator XML 的 Agent Skill
+.claude/skills         指向 ./skills 的软链接
+.agents/skills         指向 ./skills 的软链接
 docs/
   aura-creator-xml.md  XML 工作流笔记
   effect-types.md      灯效类型映射表
