@@ -50,7 +50,7 @@ async function main() {
     throw new Error("No <layer> elements found. Export an Aura Creator project with at least one effect layer.");
   }
 
-  let edits = 0;
+  let edits = normalizeLayerDeviceTypes(document);
   layers.forEach((layer, index) => {
     const recipeLayer = theme.layers[Math.min(index, theme.layers.length - 1)];
     const recipe = recipeLayer.xml;
@@ -71,7 +71,7 @@ async function main() {
     });
   });
 
-  if ((options.keyboard ?? "off") === "off") {
+  if ((options.keyboard ?? "off") === "off" && options.layout !== "device-base-bottom") {
     edits += removeMatchingDevicesFromLayers(layers, isKeyboardName);
   }
 
@@ -102,6 +102,37 @@ function applyRecipe(layer, recipe) {
   return edits;
 }
 
+function normalizeLayerDeviceTypes(document) {
+  const catalog = new Map(
+    directChildren(firstElement(document, "space"), "device")
+      .map((device) => [readName(device), device["@_type"]])
+      .filter(([name, type]) => name && isScalar(type))
+  );
+  if (catalog.size === 0) return 0;
+
+  let edits = 0;
+  for (const layer of collectElements(document, "layer")) {
+    for (const device of collectElements(layer, "device")) {
+      const expectedType = catalog.get(readName(device));
+      if (expectedType === undefined || device["@_type"] === expectedType) continue;
+      device["@_type"] = expectedType;
+      edits += 1;
+    }
+  }
+  return edits;
+}
+
+function firstElement(root, elementName) {
+  return collectElements(root, elementName)[0];
+}
+
+function directChildren(record, elementName) {
+  if (!isRecord(record)) return [];
+  const value = record[elementName];
+  if (Array.isArray(value)) return value.filter(isRecord);
+  return isRecord(value) ? [value] : [];
+}
+
 // Recolor the effect's primary r/g/b channels from a #rrggbb recipe color.
 // Only touches the first r/g/b trio (the effect's base color), leaving
 // colorPointList/gradientPointList intact.
@@ -128,56 +159,44 @@ function applyDeviceBaseBottomLayout(document, layers) {
     const layer = layers[assignment.index];
     if (!layer) continue;
     edits += setLayerName(layer, assignment.name);
-    edits += keepLayerDevices(layer, assignment.matcher);
-  }
-  if (layers[5]) {
-    edits += setLayerName(layers[5], "空层 - 保留");
-  }
-  if (layers[6]) {
-    edits += setLayerName(layers[6], "空层 - 保留");
+    edits += setLayerDeviceSelection(layer, assignment.matcher);
   }
   edits += moveLayerToEnd(document, layers[0]);
+  edits += removeEmptyEffectLayers(document);
   return edits;
 }
 
-function keepLayerDevices(node, matcher) {
+function setLayerDeviceSelection(node, matcher) {
   if (!isRecord(node)) return 0;
   let edits = 0;
 
   for (const [key, value] of Object.entries(node)) {
     if (Array.isArray(value)) {
-      const next = value.filter((item) => {
+      for (const item of value) {
         if (normalizeKey(key) === "device" && isRecord(item)) {
-          const keep = matcher(readName(item));
-          if (keep) {
-            edits += activateDeviceNode(item);
-          } else {
-            edits += 1;
-          }
-          return keep;
+          edits += setDeviceWholeSelection(item, matcher(readName(item)));
+        } else {
+          edits += setLayerDeviceSelection(item, matcher);
         }
-        edits += keepLayerDevices(item, matcher);
-        return true;
-      });
-      node[key] = next;
-    } else if (normalizeKey(key) === "device" && isRecord(value)) {
-      if (matcher(readName(value))) {
-        edits += activateDeviceNode(value);
-      } else {
-        delete node[key];
-        edits += 1;
       }
+    } else if (normalizeKey(key) === "device" && isRecord(value)) {
+      edits += setDeviceWholeSelection(value, matcher(readName(value)));
     } else if (normalizeKey(key) !== "effect" && normalizeKey(key) !== "effects") {
-      edits += keepLayerDevices(value, matcher);
+      edits += setLayerDeviceSelection(value, matcher);
     }
   }
 
   return edits;
 }
 
-function activateDeviceNode(device) {
-  if (String(device.index ?? "") !== "-1") return 0;
-  delete device.index;
+function setDeviceWholeSelection(device, selected) {
+  const next = selected ? "-1" : undefined;
+  if (device.index === next) return 0;
+  if (selected) {
+    device.index = next;
+  } else {
+    delete device.index;
+  }
   return 1;
 }
 
@@ -216,6 +235,30 @@ function moveLayerToEnd(node, target) {
     }
   }
   return 0;
+}
+
+function removeEmptyEffectLayers(node) {
+  if (!isRecord(node)) return 0;
+  let edits = 0;
+  for (const [key, value] of Object.entries(node)) {
+    if (Array.isArray(value)) {
+      if (normalizeKey(key) === "layer") {
+        const next = value.filter((item) => {
+          const keep = !isRecord(item) || collectElements(item, "effect").length > 0;
+          if (!keep) edits += 1;
+          return keep;
+        });
+        node[key] = next;
+      } else {
+        for (const item of value) {
+          edits += removeEmptyEffectLayers(item);
+        }
+      }
+    } else {
+      edits += removeEmptyEffectLayers(value);
+    }
+  }
+  return edits;
 }
 
 function hexToRgb(value) {

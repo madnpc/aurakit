@@ -25,6 +25,17 @@ const SNAP_MS = 100;
 const EDGE_GRAB_PX = 10;
 const STRIP_LEDS = 96;
 
+const EFFECT_NAMES: Record<number, PreviewEffect> = {
+  0: "static",
+  1: "breathing",
+  2: "colorCycle",
+  3: "rainbow",
+  4: "flash",
+  5: "comet",
+  6: "starry",
+  7: "tide"
+};
+
 const exportButton = requiredElement<HTMLButtonElement>("export-xml");
 const exportStatus = requiredElement<HTMLDivElement>("export-status");
 const selectedInfo = requiredElement<HTMLDivElement>("selected-info");
@@ -377,17 +388,6 @@ function downloadXml(filename: string, xml: string): void {
 }
 
 // ── Helpers ───────────────────────────────────────────────────
-
-const EFFECT_NAMES: Record<number, PreviewEffect> = {
-  0: "static",
-  1: "breathing",
-  2: "colorCycle",
-  3: "rainbow",
-  4: "flash",
-  5: "comet",
-  6: "starry",
-  7: "tide"
-};
 
 function effectName(type: number | undefined): PreviewEffect {
   return (type !== undefined && EFFECT_NAMES[type]) || "static";

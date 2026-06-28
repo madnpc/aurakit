@@ -16,16 +16,17 @@ Create importable Aura Creator XML by editing a real exported project. Prefer ge
 
 1. Ask for an exported Aura Creator XML/project file if the user has not provided one.
 2. Read `references/xml-rules.md` before editing XML structure or effect types.
-3. Read `references/theme-recipes.md` when designing a named theme or interpreting vague style words.
-4. Prefer the Node script:
+3. Read `references/effect-patterns.md` when working with signal-sync effects, gradients, random colors, color cycle, or multi-segment timelines.
+4. Read `references/theme-recipes.md` when designing a named theme or interpreting vague style words.
+5. Prefer the Node script:
 
    ```bash
    node skills/aura-creator/scripts/generate-aura-xml.mjs <input.xml> <output.xml> --theme ocean --keyboard off
    ```
 
-5. Verify the output before delivering it (see "Verify before delivering"). Never hand the user a file you have not checked against the source.
-6. Give the user the output XML path and ask them to import it manually into Aura Creator.
-7. When the user reports the result, adjust the XML conservatively and generate a new version.
+6. Verify the output before delivering it (see "Verify before delivering"). Never hand the user a file you have not checked against the source.
+7. Give the user the output XML path and ask them to import it manually into Aura Creator.
+8. When the user reports the result, adjust the XML conservatively and generate a new version.
 
 ## Verify before delivering
 
@@ -33,9 +34,10 @@ The generator edits a parsed tree, so a wrong field selector can silently corrup
 
 - **Root + catalog intact:** output still starts with `<root>` and the `<space>` device catalog has the same devices (with `folder`/`csv`/`png`/`type` attributes) as the input.
 - **Device `type` attributes uncorrupted:** `grep -o 'name="[^"]*" type="[0-9]'` returns nothing — device bindings keep `type="Keyboard|Motherboard|AddressableStrip|DIMM"`, never a bare number.
-- **Keyboard removal worked:** with `--keyboard off`, the keyboard appears once (in `<space>`) and zero times in layer `<devices>` bindings.
-- **Structure preserved:** layer count and `colorPoint`/`gradientPoint` counts match the input; only intended scalar edits changed, such as layer names, `type`, `speed`, `brightness`, `start`, `duration`, and `r`/`g`/`b`.
+- **Keyboard removal worked:** with `--keyboard off`, keyboard layer bindings either are absent or remain unselected with no `<index>` values; intentional keyboard layers may keep explicit key indexes.
+- **Structure preserved:** `colorPoint`/`gradientPoint` counts match the input; layer count matches unless deliberately removing no-effect placeholder layers; only intended scalar edits changed, such as layer names, `type`, `speed`, `brightness`, `start`, `duration`, and `r`/`g`/`b`.
 - **Base layer is truly constant:** when generating a constant-base version, the Base layer is `type=0`, starts at `0`, spans the whole visible timeline, and is bound to every intended non-keyboard device.
+- **Special effects preserved:** signal-sync layers keep exactly one effect per layer, and multi-segment layers preserve intended effect count, `start`, and `duration` ordering.
 
 If any check fails, fix the script rather than shipping the file.
 
@@ -46,6 +48,7 @@ If any check fails, fix the script rather than shipping the file.
 - Default to `--keyboard off` unless the user explicitly wants keyboard lighting.
 - For soft themes, prefer low brightness, slow speed, and layered effects instead of rainbow-heavy output.
 - Prefer a readable layer layout: name effect layers after the device or device group they target, and keep a `Base - 常亮底色` / `Base - Constant` static layer at the bottom for the always-on color.
+- Preserve each layer's complete device binding list when possible. For whole-device selection, keep the device node and set `<index>-1</index>`; for unselected devices, keep the device node with no `index`; for keyboard key regions, preserve the explicit key indexes.
 - A constant Base layer must begin at timeline `0` and run through the full project duration; do not leave inherited starts such as `3000` unless the user explicitly asks for delayed base lighting.
 - Treat these effect types as known:
   - `0` Static, inferred from UI order
@@ -56,6 +59,9 @@ If any check fails, fix the script rather than shipping the file.
   - `5` Comet, verified
   - `6` Starry Night, inferred from UI order
   - `7` Tide, verified
+  - `11` Music signal sync, observed in `fixtures/all.xml`
+  - `12` Smart signal sync, observed in `fixtures/all.xml`
+  - `13` Synchronized color change, observed in `fixtures/all.xml`
 
 ## Script Usage
 
