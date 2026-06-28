@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AuraKit Preview</title>
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <aside class="control-panel" aria-label="Preview controls">
+        <div class="brand">
+          <p class="eyebrow">AuraKit</p>
+          <h1>Ocean Preview</h1>
+        </div>
+
+        <section class="control-section">
+          <div class="section-heading">
+            <span>Playback</span>
+            <button id="play-toggle" class="tool-button" type="button">Pause</button>
+          </div>
+          <label class="field">
+            <span>Speed</span>
+            <input id="speed" type="range" min="0.02" max="0.22" step="0.01" value="0.08" />
+          </label>
+          <label class="field">
+            <span>Brightness</span>
+            <input id="brightness" type="range" min="0.25" max="1" step="0.01" value="0.82" />
+          </label>
+        </section>
+
+        <section class="control-section">
+          <div class="section-heading">
+            <span>Devices</span>
+          </div>
+          <label class="toggle-row">
+            <input id="keyboard" type="checkbox" />
+            <span>Keyboard</span>
+          </label>
+        </section>
+
+        <section class="control-section">
+          <div class="section-heading">
+            <span>Layers</span>
+          </div>
+          <div id="layers" class="layer-list"></div>
+        </section>
+      </aside>
+
+      <main class="preview-area">
+        <div class="preview-toolbar">
+          <div>
+            <p class="eyebrow">Theme</p>
+            <h2 id="theme-name">Ocean</h2>
+          </div>
+          <div id="readout" class="readout">0.00s</div>
+        </div>
+        <canvas id="preview-canvas" aria-label="RGB lighting preview"></canvas>
+      </main>
+    </div>
+    <script type="module" src="/src/app.ts"></script>
+  </body>
+</html>

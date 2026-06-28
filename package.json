@@ -1,0 +1,51 @@
+{
+  "name": "aurakit",
+  "version": "0.1.0",
+  "description": "TypeScript toolkit for parsing, editing and generating ASUS Aura Creator lighting projects.",
+  "type": "module",
+  "license": "MIT",
+  "private": false,
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "vite --host 127.0.0.1",
+    "skill:generate": "node skills/aura-creator/scripts/generate-aura-xml.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "keywords": [
+    "rgb",
+    "asus",
+    "aura",
+    "aura-sync",
+    "aura-creator",
+    "xml",
+    "typescript",
+    "lighting",
+    "animation",
+    "openrgb"
+  ],
+  "dependencies": {
+    "fast-xml-parser": "^5.2.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.7",
+    "typescript": "^5.8.3",
+    "vite": "^7.1.11",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "pnpm@11.7.0"
+}

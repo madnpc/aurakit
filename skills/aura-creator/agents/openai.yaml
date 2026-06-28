@@ -1,0 +1,4 @@
+interface:
+  display_name: "Aura Creator XML"
+  short_description: "Generate and refine Aura Creator XML effects"
+  default_prompt: "Use $aura-creator to create a soft Ocean lighting XML from my exported Aura Creator project."
