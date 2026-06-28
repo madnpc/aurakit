@@ -34,7 +34,8 @@ export function createPreviewTheme(themeId: string, options: ThemePreviewOptions
     backgroundColor: recipe.backgroundColor,
     devices: DEFAULT_DEVICES.map((device) => ({
       ...device,
-      enabled: includeKeyboard || device.id !== "keyboard"
+      enabled: includeKeyboard || device.id !== "keyboard",
+      startOffsetMs: 0
     })),
     layers: recipe.layers.map((layer) => ({
       id: `${recipe.id}-${layer.id}`,

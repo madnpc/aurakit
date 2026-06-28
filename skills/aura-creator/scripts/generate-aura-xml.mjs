@@ -70,13 +70,40 @@ async function main() {
 }
 
 function applyRecipe(layer, recipe) {
+  // Only edit fields inside <effect> elements. Searching the whole layer
+  // matches the device-binding `@_type` attribute first and corrupts it.
+  const effects = collectElements(layer, "effect");
   let edits = 0;
-  edits += setFirstScalar(layer, ["type", "effectType"], recipe.type);
-  edits += setFirstScalar(layer, ["color", "primaryColor", "hex"], recipe.color);
-  edits += setFirstScalar(layer, ["speed"], recipe.speed);
-  edits += setFirstScalar(layer, ["brightness"], recipe.brightness);
-  edits += setFirstScalar(layer, ["duration", "durationMs"], recipe.duration);
+  for (const effect of effects) {
+    edits += setFirstScalar(effect, ["type", "effectType"], recipe.type);
+    edits += setFirstScalar(effect, ["color", "primaryColor", "hex"], recipe.color);
+    edits += setRgb(effect, recipe.color);
+    edits += setFirstScalar(effect, ["speed"], recipe.speed);
+    edits += setFirstScalar(effect, ["brightness"], recipe.brightness);
+    edits += setFirstScalar(effect, ["duration", "durationMs"], recipe.duration);
+  }
   return edits;
+}
+
+// Recolor the effect's primary r/g/b channels from a #rrggbb recipe color.
+// Only touches the first r/g/b trio (the effect's base color), leaving
+// colorPointList/gradientPointList intact.
+function setRgb(effect, color) {
+  const rgb = hexToRgb(color);
+  if (!rgb) return 0;
+  let edits = 0;
+  edits += setFirstScalar(effect, ["r"], rgb.r);
+  edits += setFirstScalar(effect, ["g"], rgb.g);
+  edits += setFirstScalar(effect, ["b"], rgb.b);
+  return edits;
+}
+
+function hexToRgb(value) {
+  if (typeof value !== "string") return null;
+  const match = /^#?([0-9a-f]{6})$/i.exec(value.trim());
+  if (!match) return null;
+  const int = Number.parseInt(match[1], 16);
+  return { r: (int >> 16) & 255, g: (int >> 8) & 255, b: int & 255 };
 }
 
 function removeMatchingDevicesFromLayers(layers, matcher) {
@@ -143,6 +170,8 @@ function setFirstScalar(node, keys, nextValue) {
 
   const wanted = new Set(keys.map(normalizeKey));
   for (const key of Object.keys(node)) {
+    // Skip attribute keys (e.g. @_type on a device binding); only match elements.
+    if (key.startsWith("@_")) continue;
     if (wanted.has(normalizeKey(key)) && isScalar(node[key])) {
       node[key] = nextValue;
       return 1;
@@ -157,12 +186,14 @@ function setFirstScalar(node, keys, nextValue) {
 }
 
 function readName(record) {
-  const direct = record.name ?? record.deviceName ?? record.displayName ?? record.model;
+  // Device names live in attributes (@_name) in exported Aura XML.
+  const direct =
+    record["@_name"] ?? record.name ?? record["@_deviceName"] ?? record.deviceName ?? record.displayName ?? record.model;
   if (isScalar(direct)) return String(direct);
   let found = "";
   walk(record, (value) => {
     if (!found) {
-      const nested = value.name ?? value.deviceName ?? value.displayName ?? value.model;
+      const nested = value["@_name"] ?? value.name ?? value.deviceName ?? value.displayName ?? value.model;
       if (isScalar(nested)) found = String(nested);
     }
   });

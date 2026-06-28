@@ -26,12 +26,13 @@ function renderDeviceFrame(
   timeMs: number
 ) {
   const activeLayers = theme.layers.filter((layer) => layerTargetsDevice(layer, device.id));
+  const deviceTime = timeMs - device.startOffsetMs;
   const leds = Array.from({ length: device.leds }, (_, index) => {
     const position = device.leds <= 1 ? 0 : index / (device.leds - 1);
     const rgb = device.enabled
       ? activeLayers.reduce(
           (destination, layer) =>
-            composite(sampleLayer(layer, position, index, device.id, timeMs), destination),
+            composite(sampleLayer(layer, position, index, device.id, deviceTime), destination),
           background
         )
       : { r: 6, g: 7, b: 8, a: 1 };

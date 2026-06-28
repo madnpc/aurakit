@@ -23,6 +23,14 @@ export interface PreviewDevice {
   kind: PreviewDeviceKind;
   leds: number;
   enabled: boolean;
+  /**
+   * Per-device timeline start offset in milliseconds. A positive value delays
+   * this device's animation (it shows the state from `startOffsetMs` ago), so
+   * devices stagger instead of moving in lockstep. Preview-only for now: not
+   * yet serialized to Aura XML (pending verification of a per-device `start`
+   * field in a real exported project).
+   */
+  startOffsetMs: number;
 }
 
 export interface PreviewLayer {

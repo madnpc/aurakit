@@ -33,6 +33,7 @@
   <layers>
     <layer name="键盘" trigger="OneClick" Eye="True">
       <devices>
+        <device name="ROG FALCHION ACE 75 HE" type="0"></device>
         <device name="TUF GAMING B650M-PLUS WIFI" type="Motherboard"></device>
         <device name="AddressableHeader" type="AddressableStrip"></device>
         <device name="AddressableHeader1" type="AddressableStrip"></device>
@@ -42,11 +43,11 @@
       </devices>
       <effects>
         <effect>
-          <type>0</type>
+          <type>7</type>
           <a>255</a>
-          <r>36</r>
-          <g>56</g>
-          <b>79</b>
+          <r>255</r>
+          <g>0</g>
+          <b>0</b>
           <d1a>255</d1a>
           <d1r>255</d1r>
           <d1g>0</d1g>
@@ -196,6 +197,7 @@
     </layer>
     <layer name="Layer 6" trigger="OneClick" Eye="True">
       <devices>
+        <device name="ROG FALCHION ACE 75 HE" type="7"></device>
         <device name="TUF GAMING B650M-PLUS WIFI" type="Motherboard"></device>
         <device name="AddressableHeader" type="AddressableStrip"></device>
         <device name="AddressableHeader1" type="AddressableStrip"></device>
@@ -209,8 +211,8 @@
         <effect>
           <type>7</type>
           <a>255</a>
-          <r>142</r>
-          <g>239</g>
+          <r>0</r>
+          <g>235</g>
           <b>255</b>
           <d1a>255</d1a>
           <d1r>255</d1r>
@@ -361,6 +363,7 @@
     </layer>
     <layer name="Layer 5" trigger="OneClick" Eye="True">
       <devices>
+        <device name="ROG FALCHION ACE 75 HE" type="5"></device>
         <device name="TUF GAMING B650M-PLUS WIFI" type="Motherboard"></device>
         <device name="AddressableHeader" type="AddressableStrip"></device>
         <device name="AddressableHeader1" type="AddressableStrip"></device>
@@ -372,10 +375,10 @@
       </devices>
       <effects>
         <effect>
-          <type>5</type>
+          <type>7</type>
           <a>255</a>
-          <r>215</r>
-          <g>251</g>
+          <r>0</r>
+          <g>235</g>
           <b>255</b>
           <d1a>255</d1a>
           <d1r>255</d1r>
@@ -526,6 +529,7 @@
     </layer>
     <layer name="Layer 4" trigger="OneClick" Eye="True">
       <devices>
+        <device name="ROG FALCHION ACE 75 HE" type="5"></device>
         <device name="TUF GAMING B650M-PLUS WIFI" type="Motherboard"></device>
         <device name="AddressableHeader" type="AddressableStrip"></device>
         <device name="AddressableHeader1" type="AddressableStrip"></device>
@@ -539,8 +543,8 @@
         <effect>
           <type>5</type>
           <a>255</a>
-          <r>215</r>
-          <g>251</g>
+          <r>0</r>
+          <g>235</g>
           <b>255</b>
           <d1a>255</d1a>
           <d1r>255</d1r>
@@ -691,6 +695,7 @@
     </layer>
     <layer name="Layer 2" trigger="OneClick" Eye="True">
       <devices>
+        <device name="ROG FALCHION ACE 75 HE" type="5"></device>
         <device name="TUF GAMING B650M-PLUS WIFI" type="Motherboard"></device>
         <device name="AddressableHeader" type="AddressableStrip">
           <index>-1</index>
@@ -704,8 +709,8 @@
         <effect>
           <type>5</type>
           <a>255</a>
-          <r>215</r>
-          <g>251</g>
+          <r>0</r>
+          <g>235</g>
           <b>255</b>
           <d1a>255</d1a>
           <d1r>255</d1r>
@@ -856,6 +861,7 @@
     </layer>
     <layer name="Layer 3" trigger="OneClick" Eye="False">
       <devices>
+        <device name="ROG FALCHION ACE 75 HE" type="5"></device>
         <device name="TUF GAMING B650M-PLUS WIFI" type="Motherboard"></device>
         <device name="AddressableHeader" type="AddressableStrip"></device>
         <device name="AddressableHeader1" type="AddressableStrip">
@@ -869,6 +875,7 @@
     </layer>
     <layer name="Layer 1" trigger="OneClick" Eye="False">
       <devices>
+        <device name="ROG FALCHION ACE 75 HE" type="5"></device>
         <device name="TUF GAMING B650M-PLUS WIFI" type="Motherboard">
           <index>-1</index>
         </device>
