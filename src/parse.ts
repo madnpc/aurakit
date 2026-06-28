@@ -9,12 +9,22 @@ import {
   toArray,
   walkRecords
 } from "./internal/xml.js";
-import type { AuraDevice, AuraLayer, AuraLayerDeviceRef, AuraProject, XmlRecord, XmlValue } from "./types.js";
+import type {
+  AuraDevice,
+  AuraEffect,
+  AuraLayer,
+  AuraLayerDeviceRef,
+  AuraProject,
+  AuraRgba,
+  XmlRecord,
+  XmlValue
+} from "./types.js";
 
 const DEVICE_NAME_KEYS = ["name", "deviceName", "displayName", "model"];
 const DEVICE_KIND_KEYS = ["kind", "type", "category"];
 const LAYER_NAME_KEYS = ["name", "layerName", "displayName"];
 const EFFECT_TYPE_KEYS = ["type", "effectType"];
+const CATALOG_PARENT_KEYS = new Set(["devices", "space"]);
 const VERSION_KEYS = ["version", "creatorVersion", "auraCreatorVersion"];
 
 export function parseAuraProject(xml: string): AuraProject {
@@ -40,7 +50,10 @@ function extractDevices(document: XmlRecord): AuraDevice[] {
 
   walkRecords(document, (record, path) => {
     const location = xmlLocation(path);
-    if (location.elementKey !== "device" || location.parentKey !== "devices") {
+    // The device catalog sits under <devices> (minimal projects) or <space>
+    // (real Aura Creator exports). Layer-level <device> bindings live under
+    // <layers> and are handled separately.
+    if (location.elementKey !== "device" || !CATALOG_PARENT_KEYS.has(location.parentKey)) {
       return;
     }
     if (path.some((segment) => normalizeKey(segment) === "layers")) {
@@ -83,12 +96,51 @@ function extractLayers(document: XmlRecord): AuraLayer[] {
       ...(effectType === undefined ? {} : { effectType }),
       ...(effectName === undefined ? {} : { effectName }),
       devices: extractLayerDeviceRefs(record, path),
+      effects: extractEffects(record, path),
       raw: record,
       path
     });
   });
 
   return layers;
+}
+
+function extractEffects(layer: XmlRecord, layerPath: string[]): AuraEffect[] {
+  const effects: AuraEffect[] = [];
+
+  walkRecords(layer, (record, path) => {
+    const location = xmlLocation(path);
+    if (location.elementKey !== "effect" || location.parentKey !== "effects") {
+      return;
+    }
+
+    const type = scalarToNumber(record["type"]);
+    const start = scalarToNumber(record["start"]);
+    const duration = scalarToNumber(record["duration"] ?? record["durationMs"]);
+    const color = readEffectColor(record);
+
+    effects.push({
+      ...(type === undefined ? {} : { type }),
+      ...(start === undefined ? {} : { start }),
+      ...(duration === undefined ? {} : { duration }),
+      ...(color === undefined ? {} : { color }),
+      raw: record,
+      path: [...layerPath, ...path]
+    });
+  });
+
+  return dedupeByPath(effects);
+}
+
+function readEffectColor(effect: XmlRecord): AuraRgba | undefined {
+  const a = scalarToNumber(effect["a"]);
+  const r = scalarToNumber(effect["r"]);
+  const g = scalarToNumber(effect["g"]);
+  const b = scalarToNumber(effect["b"]);
+  if (a === undefined || r === undefined || g === undefined || b === undefined) {
+    return undefined;
+  }
+  return { a, r, g, b };
 }
 
 function extractLayerDeviceRefs(layer: XmlRecord, layerPath: string[]): AuraLayerDeviceRef[] {

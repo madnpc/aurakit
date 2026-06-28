@@ -3,58 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AuraKit Preview</title>
+    <title>AuraKit Timeline</title>
   </head>
   <body>
     <div id="app" class="app-shell">
-      <aside class="control-panel" aria-label="Preview controls">
+      <aside class="control-panel" aria-label="Timeline controls">
         <div class="brand">
           <p class="eyebrow">AuraKit</p>
-          <h1>Ocean Preview</h1>
+          <h1>Timeline Editor</h1>
         </div>
 
         <section class="control-section">
           <div class="section-heading">
-            <span>Playback</span>
-            <button id="play-toggle" class="tool-button" type="button">Pause</button>
+            <span>Export</span>
+            <button id="export-xml" class="tool-button" type="button">Rebuild XML</button>
           </div>
-          <label class="field">
-            <span>Speed</span>
-            <input id="speed" type="range" min="0.02" max="0.22" step="0.01" value="0.08" />
-          </label>
-          <label class="field">
-            <span>Brightness</span>
-            <input id="brightness" type="range" min="0.25" max="1" step="0.01" value="0.82" />
-          </label>
+          <p class="hint">
+            Drag a layer bar to move its start; drag an edge to resize its duration. Rebuild writes the
+            edits back into the real exported project and downloads importable Aura XML.
+          </p>
+          <div id="export-status" class="export-status" role="status"></div>
         </section>
 
         <section class="control-section">
           <div class="section-heading">
-            <span>Devices</span>
+            <span>Selected layer</span>
           </div>
-          <label class="toggle-row">
-            <input id="keyboard" type="checkbox" />
-            <span>Keyboard</span>
-          </label>
-        </section>
-
-        <section class="control-section">
-          <div class="section-heading">
-            <span>Layers</span>
-          </div>
-          <div id="layers" class="layer-list"></div>
+          <div id="selected-info" class="selected-info">Pick a layer bar to see its timing.</div>
         </section>
       </aside>
 
       <main class="preview-area">
         <div class="preview-toolbar">
           <div>
-            <p class="eyebrow">Theme</p>
-            <h2 id="theme-name">Ocean</h2>
+            <p class="eyebrow">Project timeline</p>
+            <h2 id="project-name">real-aura-export.xml</h2>
           </div>
-          <div id="readout" class="readout">0.00s</div>
+          <div class="toolbar-right">
+            <button id="play-toggle" class="tool-button" type="button">Pause</button>
+            <div id="readout" class="readout">0.00s</div>
+          </div>
         </div>
-        <canvas id="preview-canvas" aria-label="RGB lighting preview"></canvas>
+
+        <div class="timeline-wrap">
+          <div id="timeline" class="timeline" aria-label="Layer timeline">
+            <div id="ruler" class="ruler"></div>
+            <div id="tracks" class="tracks"></div>
+            <div id="playhead" class="playhead"></div>
+          </div>
+          <canvas id="strip-canvas" class="strip-canvas" aria-label="Composited lighting at playhead"></canvas>
+        </div>
       </main>
     </div>
     <script type="module" src="/src/app.ts"></script>

@@ -34,7 +34,8 @@ The generator edits a parsed tree, so a wrong field selector can silently corrup
 - **Root + catalog intact:** output still starts with `<root>` and the `<space>` device catalog has the same devices (with `folder`/`csv`/`png`/`type` attributes) as the input.
 - **Device `type` attributes uncorrupted:** `grep -o 'name="[^"]*" type="[0-9]'` returns nothing — device bindings keep `type="Keyboard|Motherboard|AddressableStrip|DIMM"`, never a bare number.
 - **Keyboard removal worked:** with `--keyboard off`, the keyboard appears once (in `<space>`) and zero times in layer `<devices>` bindings.
-- **Structure preserved:** layer count and `colorPoint`/`gradientPoint` counts match the input; only `type`/`speed`/`brightness`/`duration`/`r`/`g`/`b` scalars changed.
+- **Structure preserved:** layer count and `colorPoint`/`gradientPoint` counts match the input; only intended scalar edits changed, such as layer names, `type`, `speed`, `brightness`, `start`, `duration`, and `r`/`g`/`b`.
+- **Base layer is truly constant:** when generating a constant-base version, the Base layer is `type=0`, starts at `0`, spans the whole visible timeline, and is bound to every intended non-keyboard device.
 
 If any check fails, fix the script rather than shipping the file.
 
@@ -44,6 +45,8 @@ If any check fails, fix the script rather than shipping the file.
 - Keep the top-level device catalog intact. Remove unwanted devices only from layer bindings.
 - Default to `--keyboard off` unless the user explicitly wants keyboard lighting.
 - For soft themes, prefer low brightness, slow speed, and layered effects instead of rainbow-heavy output.
+- Prefer a readable layer layout: name effect layers after the device or device group they target, and keep a `Base - 常亮底色` / `Base - Constant` static layer at the bottom for the always-on color.
+- A constant Base layer must begin at timeline `0` and run through the full project duration; do not leave inherited starts such as `3000` unless the user explicitly asks for delayed base lighting.
 - Treat these effect types as known:
   - `0` Static, inferred from UI order
   - `1` Breathing, inferred from UI order
@@ -61,7 +64,8 @@ node skills/aura-creator/scripts/generate-aura-xml.mjs input.xml output.xml \
   --theme ocean \
   --keyboard off \
   --speed 1 \
-  --brightness 2
+  --brightness 2 \
+  --layout device-base-bottom
 ```
 
 Themes currently supported by the script:

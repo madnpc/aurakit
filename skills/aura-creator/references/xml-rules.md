@@ -60,6 +60,9 @@ The generator parses with `attributeNamePrefix: "@_"`, so attributes become keys
 - Keep XML declaration, root element, unknown fields, and top-level device catalog.
 - Modify existing scalar fields such as `type`, `color`, `speed`, `brightness`, `duration`, `start`, and `angle` only when present.
 - Remove keyboard participation from layer-level `<devices>`, not from the project-level `<devices>` list.
+- Treat `<index>-1</index>` inside a layer device binding as an excluded device for that layer. When naming layers after devices, name them after the active device or device group, not after excluded devices or inherited export names.
+- Prefer device/group layer names over generic or stale names such as `Layer 6` or `键盘` after keyboard removal. Examples: `主板 - 潮汐`, `ARGB 灯带 - 彗星`, `内存 A2 - 彗星`.
+- When a project uses a constant base color, keep a bottom `Base - 常亮底色` / `Base - Constant` layer bound to every intended non-keyboard device. Its effect should be `type=0`, `start=0`, and `duration` long enough to span the whole visible timeline.
 - If there are no layers, ask the user to export a project with at least one official effect layer.
 - If import fails, revert to fewer edits: first only remove keyboard, then only adjust colors, then effect type/speed.
 

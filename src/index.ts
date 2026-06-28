@@ -6,4 +6,5 @@ export * from "./presets/theme.js";
 export * from "./preview/index.js";
 export * from "./serialize.js";
 export * from "./themes/recipes.js";
+export * from "./timeline.js";
 export type * from "./types.js";
