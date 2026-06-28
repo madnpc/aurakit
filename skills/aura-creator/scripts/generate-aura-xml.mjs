@@ -54,10 +54,17 @@ async function main() {
   layers.forEach((layer, index) => {
     const recipeLayer = theme.layers[Math.min(index, theme.layers.length - 1)];
     const recipe = recipeLayer.xml;
-    edits += applyRecipe(layer, {
+    const resolvedRecipe = {
       ...recipe,
       speed: numberOption(options.speed, recipe.speed),
       brightness: numberOption(options.brightness, recipe.brightness)
+    };
+    if (index === 0) {
+      resolvedRecipe.color = colorOption(options["base-color"], resolvedRecipe.color);
+      resolvedRecipe.brightness = numberOption(options["base-brightness"], resolvedRecipe.brightness);
+    }
+    edits += applyRecipe(layer, {
+      ...resolvedRecipe
     });
   });
 
@@ -237,6 +244,14 @@ function numberOption(value, fallback) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function colorOption(value, fallback) {
+  if (value === undefined) return fallback;
+  if (!hexToRgb(value)) {
+    throw new Error(`Invalid color "${value}". Use #rrggbb.`);
+  }
+  return value;
+}
+
 function printHelp() {
   console.error(`Usage:
   node skills/aura-creator/scripts/generate-aura-xml.mjs <input.xml> <output.xml> [options]
@@ -245,7 +260,9 @@ Options:
   --theme ${Object.keys(THEMES).join("|")}
   --keyboard off|on
   --speed <number>
-  --brightness <number>`);
+  --brightness <number>
+  --base-color <#rrggbb>
+  --base-brightness <number>`);
 }
 
 function isRecord(value) {

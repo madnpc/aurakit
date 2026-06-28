@@ -1,6 +1,46 @@
 # Aura Creator XML Rules
 
-Use exported XML as the source of truth.
+Use exported XML as the source of truth. Never reconstruct this format from memory — copy a real export and edit it.
+
+## Document Structure
+
+A real exported project looks like:
+
+```
+<root>
+  <version>4.5.4.0</version>
+  <space>                         <!-- device catalog; keep intact -->
+    <device name="..." folder="..." csv="..." png="..." type="Keyboard"><x>0</x><y>3</y></device>
+    ... one per physical device ...
+  </space>
+  <layers>
+    <layer name="..." trigger="OneClick" Eye="True">
+      <devices>                   <!-- per-layer bindings; remove devices here -->
+        <device name="..." type="Keyboard" />
+        <device name="..." type="DIMM"><index>-1</index></device>   <!-- index -1 = excluded -->
+      </devices>
+      <effects>
+        <effect>                  <!-- ~60 fields; only edit scalars listed below -->
+          <type>7</type> <a>255</a> <r>0</r> <g>235</g> <b>255</b> ...
+          <speed>2</speed> <brightness>3</brightness> <angle>90</angle>
+          <colorPointList>...</colorPointList>
+          <gradientPointList>...</gradientPointList>
+          <start>3000</start> <duration>2000</duration>
+        </effect>
+      </effects>
+    </layer>
+  </layers>
+</root>
+```
+
+There is no `<?xml?>` declaration and no `<AuraCreatorProject>` / `<kind>` / `<color>` nodes — if you see those, the file was fabricated and will not import.
+
+## Parser Pitfall (fast-xml-parser)
+
+The generator parses with `attributeNamePrefix: "@_"`, so attributes become keys like `@_name` and `@_type`, while child elements are plain keys (`name`, `type`, ...).
+
+- Read a device's name via `@_name`, not `name` (the latter is undefined → keyboard filtering silently fails).
+- When setting an effect scalar named `type`, skip `@_`-prefixed keys, or you will overwrite a device binding's `@_type` attribute instead of the effect's `<type>` element.
 
 ## Known Effect Types
 

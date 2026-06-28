@@ -7,6 +7,11 @@ description: Generate, edit, and refine ASUS Aura Creator XML lighting project f
 
 Create importable Aura Creator XML by editing a real exported project. Prefer generated XML that the user manually imports into Aura Creator, then refine from their feedback.
 
+## Never do this
+
+- **Never hand-author Aura Creator XML or invent a schema from memory.** The real format is `<root>` → `<space>` (device catalog) → `<layers>` → `<effect>` (~60 fields per effect). Anything you write from scratch will be missing fields and will fail to import. The output must be a copy of the user's exported file with only scalar edits and device removals — produced by the script in step 4, not typed by hand.
+- If the user has not provided an exported XML, **stop and ask for one.** Do not fabricate a starting file.
+
 ## Workflow
 
 1. Ask for an exported Aura Creator XML/project file if the user has not provided one.
@@ -18,8 +23,20 @@ Create importable Aura Creator XML by editing a real exported project. Prefer ge
    node skills/aura-creator/scripts/generate-aura-xml.mjs <input.xml> <output.xml> --theme ocean --keyboard off
    ```
 
-5. Give the user the output XML path and ask them to import it manually into Aura Creator.
-6. When the user reports the result, adjust the XML conservatively and generate a new version.
+5. Verify the output before delivering it (see "Verify before delivering"). Never hand the user a file you have not checked against the source.
+6. Give the user the output XML path and ask them to import it manually into Aura Creator.
+7. When the user reports the result, adjust the XML conservatively and generate a new version.
+
+## Verify before delivering
+
+The generator edits a parsed tree, so a wrong field selector can silently corrupt the file (a past bug overwrote each device binding's `type="Keyboard"` attribute with the effect-type number, and `--keyboard off` failed to remove the keyboard because device names live in the `@_name` attribute). Always confirm against the source export:
+
+- **Root + catalog intact:** output still starts with `<root>` and the `<space>` device catalog has the same devices (with `folder`/`csv`/`png`/`type` attributes) as the input.
+- **Device `type` attributes uncorrupted:** `grep -o 'name="[^"]*" type="[0-9]'` returns nothing — device bindings keep `type="Keyboard|Motherboard|AddressableStrip|DIMM"`, never a bare number.
+- **Keyboard removal worked:** with `--keyboard off`, the keyboard appears once (in `<space>`) and zero times in layer `<devices>` bindings.
+- **Structure preserved:** layer count and `colorPoint`/`gradientPoint` counts match the input; only `type`/`speed`/`brightness`/`duration`/`r`/`g`/`b` scalars changed.
+
+If any check fails, fix the script rather than shipping the file.
 
 ## Generation Rules
 
