@@ -1,0 +1,212 @@
+{
+  "effects": {
+    "static": 0,
+    "breathing": 1,
+    "colorCycle": 2,
+    "rainbow": 3,
+    "flash": 4,
+    "comet": 5,
+    "starry": 6,
+    "tide": 7
+  },
+  "themes": {
+    "ocean": {
+      "id": "ocean",
+      "name": "Ocean",
+      "backgroundColor": "#101417",
+      "previewDefaults": {
+        "speed": 0.08,
+        "brightness": 0.82
+      },
+      "layers": [
+        {
+          "id": "base",
+          "label": "Deep base",
+          "effect": "static",
+          "xml": {
+            "type": 0,
+            "color": "#24384f",
+            "speed": 1,
+            "brightness": 2,
+            "duration": 12000
+          },
+          "preview": {
+            "opacity": 0.42,
+            "speedMultiplier": 0,
+            "width": 1,
+            "phase": 0
+          }
+        },
+        {
+          "id": "tide",
+          "label": "Ice tide",
+          "effect": "tide",
+          "xml": {
+            "type": 7,
+            "color": "#8eefff",
+            "speed": 1,
+            "brightness": 2,
+            "duration": 12000
+          },
+          "preview": {
+            "secondaryColor": "#2d5f78",
+            "opacity": 0.72,
+            "speedMultiplier": 1,
+            "width": 0.28,
+            "phase": 0.08
+          }
+        },
+        {
+          "id": "crest",
+          "label": "Soft crest",
+          "effect": "comet",
+          "xml": {
+            "type": 5,
+            "color": "#d7fbff",
+            "speed": 1,
+            "brightness": 1,
+            "duration": 14000
+          },
+          "preview": {
+            "opacity": 0.22,
+            "speedMultiplier": 0.72,
+            "width": 0.12,
+            "phase": 0.64
+          }
+        }
+      ]
+    },
+    "galaxy": {
+      "id": "galaxy",
+      "name": "Galaxy",
+      "backgroundColor": "#0f0d16",
+      "previewDefaults": {
+        "speed": 0.06,
+        "brightness": 0.78
+      },
+      "layers": [
+        {
+          "id": "base",
+          "label": "Violet base",
+          "effect": "static",
+          "xml": {
+            "type": 0,
+            "color": "#221b3a",
+            "speed": 1,
+            "brightness": 2,
+            "duration": 14000
+          },
+          "preview": {
+            "opacity": 0.48,
+            "speedMultiplier": 0,
+            "width": 1,
+            "phase": 0
+          }
+        },
+        {
+          "id": "nebula",
+          "label": "Blue-violet tide",
+          "effect": "tide",
+          "xml": {
+            "type": 7,
+            "color": "#7c8cff",
+            "speed": 1,
+            "brightness": 2,
+            "duration": 14000
+          },
+          "preview": {
+            "secondaryColor": "#332a62",
+            "opacity": 0.64,
+            "speedMultiplier": 0.78,
+            "width": 0.32,
+            "phase": 0.22
+          }
+        },
+        {
+          "id": "stars",
+          "label": "Quiet stars",
+          "effect": "starry",
+          "xml": {
+            "type": 6,
+            "color": "#e0e6ff",
+            "speed": 1,
+            "brightness": 1,
+            "duration": 16000
+          },
+          "preview": {
+            "opacity": 0.2,
+            "speedMultiplier": 1.4,
+            "width": 0.1,
+            "phase": 0.4
+          }
+        }
+      ]
+    },
+    "aurora": {
+      "id": "aurora",
+      "name": "Aurora",
+      "backgroundColor": "#0b1412",
+      "previewDefaults": {
+        "speed": 0.07,
+        "brightness": 0.8
+      },
+      "layers": [
+        {
+          "id": "base",
+          "label": "Forest base",
+          "effect": "static",
+          "xml": {
+            "type": 0,
+            "color": "#12342f",
+            "speed": 1,
+            "brightness": 2,
+            "duration": 13000
+          },
+          "preview": {
+            "opacity": 0.46,
+            "speedMultiplier": 0,
+            "width": 1,
+            "phase": 0
+          }
+        },
+        {
+          "id": "curtain",
+          "label": "Green curtain",
+          "effect": "tide",
+          "xml": {
+            "type": 7,
+            "color": "#5ff5c8",
+            "speed": 1,
+            "brightness": 2,
+            "duration": 13000
+          },
+          "preview": {
+            "secondaryColor": "#1e6f5d",
+            "opacity": 0.68,
+            "speedMultiplier": 0.84,
+            "width": 0.3,
+            "phase": 0.16
+          }
+        },
+        {
+          "id": "glow",
+          "label": "Soft glow",
+          "effect": "breathing",
+          "xml": {
+            "type": 1,
+            "color": "#d8fff2",
+            "speed": 1,
+            "brightness": 1,
+            "duration": 15000
+          },
+          "preview": {
+            "opacity": 0.18,
+            "speedMultiplier": 0.56,
+            "width": 0.16,
+            "phase": 0.5
+          }
+        }
+      ]
+    }
+  }
+}

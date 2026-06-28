@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuraCreatorProject>
+  <version>4.5.4.0</version>
+  <devices>
+    <device>
+      <name>ROG FALCHION ACE 75 HE</name>
+      <kind>keyboard</kind>
+    </device>
+    <device>
+      <name>TUF GAMING B650M-PLUS WIFI</name>
+      <kind>motherboard</kind>
+    </device>
+    <device>
+      <name>Addressable Header 1</name>
+      <kind>argb</kind>
+    </device>
+    <device>
+      <name>Memory DIMM A2</name>
+      <kind>memory</kind>
+    </device>
+  </devices>
+  <layers>
+    <layer>
+      <name>Base</name>
+      <effect>
+        <type>0</type>
+        <color>#24384f</color>
+        <speed>1</speed>
+        <brightness>1</brightness>
+        <duration>12000</duration>
+      </effect>
+      <devices>
+        <device>
+          <name>TUF GAMING B650M-PLUS WIFI</name>
+        </device>
+        <device>
+          <name>Addressable Header 1</name>
+        </device>
+        <device>
+          <name>Memory DIMM A2</name>
+        </device>
+      </devices>
+    </layer>
+    <layer>
+      <name>Flow</name>
+      <effect>
+        <type>7</type>
+        <color>#8eefff</color>
+        <speed>1</speed>
+        <brightness>1</brightness>
+        <duration>10000</duration>
+      </effect>
+      <devices>
+        <device>
+          <name>TUF GAMING B650M-PLUS WIFI</name>
+        </device>
+      </devices>
+    </layer>
+  </layers>
+</AuraCreatorProject>

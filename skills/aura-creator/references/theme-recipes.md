@@ -1,6 +1,6 @@
 # Theme Recipes
 
-Use these recipes as starting points, then adapt from user feedback.
+Use `shared/aura-theme-recipes.json` as the source of truth for theme colors, XML effect types, and preview behavior. This file is a human-readable guide for style intent and user feedback.
 
 ## Ocean
 

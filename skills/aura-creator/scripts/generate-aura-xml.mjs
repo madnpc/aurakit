@@ -5,45 +5,17 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 
-const EFFECTS = {
-  static: 0,
-  comet: 5,
-  tide: 7,
-  starry: 6,
-  breathing: 1
-};
-
-const THEMES = {
-  ocean: {
-    layers: [
-      { type: EFFECTS.static, color: "#24384f", speed: 1, brightness: 2, duration: 12000 },
-      { type: EFFECTS.tide, color: "#8eefff", speed: 1, brightness: 2, duration: 12000 },
-      { type: EFFECTS.comet, color: "#d7fbff", speed: 1, brightness: 1, duration: 14000 }
-    ]
-  },
-  galaxy: {
-    layers: [
-      { type: EFFECTS.static, color: "#221b3a", speed: 1, brightness: 2, duration: 14000 },
-      { type: EFFECTS.tide, color: "#7c8cff", speed: 1, brightness: 2, duration: 14000 },
-      { type: EFFECTS.starry, color: "#e0e6ff", speed: 1, brightness: 1, duration: 16000 }
-    ]
-  },
-  aurora: {
-    layers: [
-      { type: EFFECTS.static, color: "#12342f", speed: 1, brightness: 2, duration: 13000 },
-      { type: EFFECTS.tide, color: "#5ff5c8", speed: 1, brightness: 2, duration: 13000 },
-      { type: EFFECTS.breathing, color: "#d8fff2", speed: 1, brightness: 1, duration: 15000 }
-    ]
-  }
-};
+const recipeFileUrl = new URL("../../../shared/aura-theme-recipes.json", import.meta.url);
+const recipeFile = JSON.parse(await readFile(recipeFileUrl, "utf8"));
+const THEMES = recipeFile.themes;
 
 const parser = new XMLParser({
   attributeNamePrefix: "@_",
   ignoreAttributes: false,
   ignoreDeclaration: false,
-  parseAttributeValue: true,
-  parseTagValue: true,
-  trimValues: false
+  parseAttributeValue: false,
+  parseTagValue: false,
+  trimValues: true
 });
 
 const builder = new XMLBuilder({
@@ -80,7 +52,8 @@ async function main() {
 
   let edits = 0;
   layers.forEach((layer, index) => {
-    const recipe = theme.layers[Math.min(index, theme.layers.length - 1)];
+    const recipeLayer = theme.layers[Math.min(index, theme.layers.length - 1)];
+    const recipe = recipeLayer.xml;
     edits += applyRecipe(layer, {
       ...recipe,
       speed: numberOption(options.speed, recipe.speed),
@@ -238,7 +211,7 @@ function printHelp() {
   node skills/aura-creator/scripts/generate-aura-xml.mjs <input.xml> <output.xml> [options]
 
 Options:
-  --theme ocean|galaxy|aurora
+  --theme ${Object.keys(THEMES).join("|")}
   --keyboard off|on
   --speed <number>
   --brightness <number>`);

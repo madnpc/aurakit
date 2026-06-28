@@ -1,10 +1,13 @@
+import { getRequiredAuraThemeRecipe } from "../themes/recipes.js";
 import type { PreviewTheme } from "./types.js";
 
-export interface OceanPreviewOptions {
+export interface ThemePreviewOptions {
   speed?: number;
   brightness?: number;
   includeKeyboard?: boolean;
 }
+
+export type OceanPreviewOptions = ThemePreviewOptions;
 
 const DEFAULT_DEVICES = [
   { id: "motherboard", label: "Motherboard", kind: "motherboard", leds: 36 },
@@ -16,57 +19,38 @@ const DEFAULT_DEVICES = [
   { id: "keyboard", label: "Keyboard", kind: "keyboard", leds: 64 }
 ] as const;
 
-export function createOceanPreviewTheme(options: OceanPreviewOptions = {}): PreviewTheme {
-  const speed = options.speed ?? 0.08;
-  const brightness = options.brightness ?? 0.82;
+export function createPreviewTheme(themeId: string, options: ThemePreviewOptions = {}): PreviewTheme {
+  const recipe = getRequiredAuraThemeRecipe(themeId);
+  const speed = options.speed ?? recipe.previewDefaults.speed;
+  const brightness = options.brightness ?? recipe.previewDefaults.brightness;
   const includeKeyboard = options.includeKeyboard ?? false;
   const activeDeviceIds = DEFAULT_DEVICES.filter((device) => includeKeyboard || device.id !== "keyboard").map(
     (device) => device.id
   );
 
   return {
-    id: "ocean-soft",
-    name: "Ocean",
-    backgroundColor: "#101417",
+    id: recipe.id,
+    name: recipe.name,
+    backgroundColor: recipe.backgroundColor,
     devices: DEFAULT_DEVICES.map((device) => ({
       ...device,
       enabled: includeKeyboard || device.id !== "keyboard"
     })),
-    layers: [
-      {
-        id: "ocean-base",
-        label: "Deep base",
-        effect: "static",
-        color: "#24384f",
-        opacity: 0.42 * brightness,
-        speed: 0,
-        width: 1,
-        phase: 0,
-        deviceIds: activeDeviceIds
-      },
-      {
-        id: "ocean-tide",
-        label: "Ice tide",
-        effect: "tide",
-        color: "#8eefff",
-        secondaryColor: "#2d5f78",
-        opacity: 0.72 * brightness,
-        speed,
-        width: 0.28,
-        phase: 0.08,
-        deviceIds: activeDeviceIds
-      },
-      {
-        id: "ocean-comet",
-        label: "Soft crest",
-        effect: "comet",
-        color: "#d7fbff",
-        opacity: 0.22 * brightness,
-        speed: speed * 0.72,
-        width: 0.12,
-        phase: 0.64,
-        deviceIds: activeDeviceIds
-      }
-    ]
+    layers: recipe.layers.map((layer) => ({
+      id: `${recipe.id}-${layer.id}`,
+      label: layer.label,
+      effect: layer.effect,
+      color: layer.xml.color,
+      ...(layer.preview.secondaryColor === undefined ? {} : { secondaryColor: layer.preview.secondaryColor }),
+      opacity: layer.preview.opacity * brightness,
+      speed: speed * layer.preview.speedMultiplier,
+      width: layer.preview.width,
+      phase: layer.preview.phase,
+      deviceIds: activeDeviceIds
+    }))
   };
+}
+
+export function createOceanPreviewTheme(options: OceanPreviewOptions = {}): PreviewTheme {
+  return createPreviewTheme("ocean", options);
 }

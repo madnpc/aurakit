@@ -1,5 +1,11 @@
 export const AURA_EFFECT_TYPES = {
+  0: "Static",
+  1: "Breathing",
+  2: "Color Cycle",
+  3: "Rainbow",
+  4: "Flash",
   5: "Comet",
+  6: "Starry Night",
   7: "Tide"
 } as const;
 
