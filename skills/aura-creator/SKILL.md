@@ -51,18 +51,19 @@ If any check fails, fix the script rather than shipping the file.
 - Preserve each layer's complete device binding list when possible. For whole-device selection, keep the device node and set `<index>-1</index>`; for unselected devices, keep the device node with no `index`; for keyboard key regions, preserve the explicit key indexes.
 - A constant Base layer must begin at timeline `0` and run through the full project duration; do not leave inherited starts such as `3000` unless the user explicitly asks for delayed base lighting.
 - For dual-color Breathing or Flash, use `colormodeselection=4`; set primary `r/g/b` and `d1*` to the first color, and `d2*` to the second color.
+- Treat the user-provided `all.xml` as a reference catalog for rules, not as the theme-generation source unless the user explicitly asks to base a profile on it. Its layer 6 intentionally contains all normal timeline effects, including two Breathing samples.
 - Treat these effect types as known:
-  - `0` Static, inferred from UI order
-  - `1` Breathing, inferred from UI order
-  - `2` Color Cycle, inferred from UI order
-  - `3` Rainbow, inferred from UI order
-  - `4` Flash, inferred from UI order
-  - `5` Comet, verified
-  - `6` Starry Night, inferred from UI order
-  - `7` Tide, verified
-  - `11` Music signal sync, observed in `fixtures/all.xml`
-  - `12` Smart signal sync, observed in `fixtures/all.xml`
-  - `13` Synchronized color change, observed in `fixtures/all.xml`
+  - `0` Static, verified in `all.xml` layer 6
+  - `1` Breathing, verified twice in `all.xml` layer 6 with random and gradient modes
+  - `2` Color Cycle, verified in `all.xml` layer 6
+  - `3` Rainbow, verified in `all.xml` layer 6
+  - `4` Flash, verified in `all.xml` layer 6; dual-color mode also verified
+  - `5` Comet, verified in `all.xml` layer 6
+  - `6` Starry Night, verified in `all.xml` layer 6
+  - `7` Tide, verified in `all.xml` layer 6
+  - `11` Music signal sync, observed in `all.xml`
+  - `12` Smart signal sync, observed in `all.xml`
+  - `13` Synchronized color change, observed in `all.xml`
 
 ## Script Usage
 

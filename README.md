@@ -15,7 +15,7 @@ AuraKit is an early-stage project. The parser, XML editing helpers, preview rend
 - Tested primarily against the included fixture and limited exported projects.
 - Unknown XML nodes are preserved wherever possible.
 - XML is generated for manual import into Aura Creator, not direct device control.
-- Effect type mapping is partially verified from exports, including `5 = Comet`, `7 = Tide`, and signal-sync types `11` through `13`.
+- Effect type mapping is partially verified from exports, including normal timeline types `0` through `7` from the user-provided `all.xml` sample and signal-sync types `11` through `13`.
 - Aura Creator binding and color-mode rules are treated as fixture-backed research data; exported XML remains the source of truth.
 
 ## Features
@@ -125,17 +125,17 @@ Aura Creator stores built-in effects as numeric XML values. AuraKit currently tr
 
 | XML type | Chinese UI | Effect | Status |
 | ---: | --- | --- | --- |
-| 0 | 恒亮 | Static | Inferred from UI order |
-| 1 | 呼吸 | Breathing | Inferred from UI order; dual-color mode verified |
-| 2 | 彩色循环 | Color Cycle | Inferred from UI order |
-| 3 | 彩虹 | Rainbow | Inferred from UI order |
-| 4 | 闪烁 | Flash | Inferred from UI order; dual-color mode verified |
-| 5 | 彗星 | Comet | Verified from exported timeline |
-| 6 | 繁星 | Starry Night | Inferred from UI order |
-| 7 | 潮汐 | Tide | Verified from exported timeline |
-| 11 | 音乐 | Music signal sync | Verified from exported fixture |
-| 12 | 智能 | Smart signal sync | Verified from exported fixture |
-| 13 | 同步变色 | Synchronized color change | Verified from exported fixture |
+| 0 | 恒亮 | Static | Verified in `all.xml` layer 6 |
+| 1 | 呼吸 | Breathing | Verified twice in `all.xml` layer 6; random and gradient modes there, dual-color mode verified separately |
+| 2 | 彩色循环 | Color Cycle | Verified in `all.xml` layer 6 |
+| 3 | 彩虹 | Rainbow | Verified in `all.xml` layer 6 |
+| 4 | 闪烁 | Flash | Verified in `all.xml` layer 6; dual-color mode verified |
+| 5 | 彗星 | Comet | Verified in `all.xml` layer 6 |
+| 6 | 繁星 | Starry Night | Verified in `all.xml` layer 6 |
+| 7 | 潮汐 | Tide | Verified in `all.xml` layer 6 |
+| 11 | 音乐 | Music signal sync | Verified in `all.xml` signal-sync layers |
+| 12 | 智能 | Smart signal sync | Verified in `all.xml` signal-sync layers |
+| 13 | 同步变色 | Synchronized color change | Verified in `all.xml` signal-sync layers |
 
 See [docs/effect-types.md](docs/effect-types.md) for verification notes.
 
@@ -184,7 +184,7 @@ fixtures/
 ## Roadmap
 
 - Add fixtures from more Aura Creator exports.
-- Verify the remaining effect type values with one-layer projects.
+- Add more one-layer fixtures for parameter semantics and device compatibility.
 - Expand preset coverage beyond Ocean.
 - Introduce a stable CLI once XML compatibility is better understood.
 - Improve preview parity with Aura Creator timing and device layouts.

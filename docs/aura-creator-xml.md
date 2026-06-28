@@ -49,5 +49,6 @@ Real Aura Creator exports may include additional fields. Keep those fields intac
 - In real Aura Creator exports, layer-level device nodes represent selection state. Prefer preserving the full `<devices>` list and editing `index` values instead of deleting non-target devices.
 - `<index>-1</index>` selects a whole non-keyboard device. A device node with no `index` is present but not selected. Keyboard regions use explicit key indexes.
 - Signal-sync effects (`type=11`, `12`, `13`) should remain single-effect layers. Normal timeline layers may contain multiple ordered `<effect>` nodes.
+- The user-provided `all.xml` sample is a reference catalog, not a theme-generation base. Its layer 6 verifies the normal effect sequence `0` Static, `1` Breathing random, `1` Breathing gradient, `2` Color Cycle, `3` Rainbow, `4` Flash, `5` Comet, `6` Starry Night, and `7` Tide.
 - `colormodeselection=4` is dual-color mode for Breathing (`type=1`) and Flash (`type=4`): set primary `r/g/b` and `d1*` to the first color, and `d2*` to the second color.
 - `colormodeselection=6` is gradient mode in observed exports. Preserve `gradientPointList` count and coordinates unless the export under edit proves a different structure.

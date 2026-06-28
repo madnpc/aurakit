@@ -46,14 +46,14 @@ The generator parses with `attributeNamePrefix: "@_"`, so attributes become keys
 
 | type | Effect | Confidence |
 | ---: | --- | --- |
-| 0 | Static | Inferred from UI order |
-| 1 | Breathing | Inferred from UI order |
-| 2 | Color Cycle | Inferred from UI order |
-| 3 | Rainbow | Inferred from UI order |
-| 4 | Flash | Inferred from UI order |
-| 5 | Comet | Verified |
-| 6 | Starry Night | Inferred from UI order |
-| 7 | Tide | Verified |
+| 0 | Static | Verified in `all.xml` layer 6 |
+| 1 | Breathing | Verified twice in `all.xml` layer 6 |
+| 2 | Color Cycle | Verified in `all.xml` layer 6 |
+| 3 | Rainbow | Verified in `all.xml` layer 6 |
+| 4 | Flash | Verified in `all.xml` layer 6 |
+| 5 | Comet | Verified in `all.xml` layer 6 |
+| 6 | Starry Night | Verified in `all.xml` layer 6 |
+| 7 | Tide | Verified in `all.xml` layer 6 |
 | 11 | Music signal sync | Observed + user-confirmed |
 | 12 | Smart signal sync | Observed + user-confirmed |
 | 13 | Synchronized color change | Observed + user-confirmed |
@@ -69,6 +69,7 @@ The generator parses with `attributeNamePrefix: "@_"`, so attributes become keys
 - Prefer device/group layer names over generic or stale names such as `Layer 6` or `键盘` after keyboard removal. Examples: `主板 - 潮汐`, `ARGB 灯带 - 彗星`, `内存 A2 - 彗星`.
 - When a project uses a constant base color, keep a bottom `Base - 常亮底色` / `Base - Constant` layer bound to every intended non-keyboard device. Its effect should be `type=0`, `start=0`, and `duration` long enough to span the whole visible timeline.
 - Keep signal-sync effects (`type=11`, `12`, `13`) as single-effect layers. They are not normal multi-segment timeline layers.
+- Treat the user-provided `all.xml` as a reference catalog, not as a profile base. Its layer 6 intentionally includes Static, two Breathing samples, Color Cycle, Rainbow, Flash, Comet, Starry Night, and Tide.
 - Multi-segment normal layers may contain multiple `<effect>` nodes. Preserve their order and `start`/`duration` sequence unless intentionally editing the timeline.
 - Preserve `colorPointList` and `gradientPointList` node counts. For gradient mode, prefer editing existing point colors over adding/removing points.
 - For dual-color Breathing/Flash, use `colormodeselection=4`, set `d1*` and `d2*` to the two colors, and keep primary `r/g/b` aligned with the first color.

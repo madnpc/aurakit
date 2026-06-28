@@ -1,6 +1,8 @@
 # Aura Effect Patterns
 
-Use this reference after reading a real Aura Creator export. It records observed effect semantics from `fixtures/all.xml` and user-confirmed behavior.
+Use this reference after reading a real Aura Creator export. It records observed effect semantics from the user-provided `all.xml` sample and user-confirmed behavior.
+
+`all.xml` is a reference catalog for learning Aura Creator rules, not a theme-generation base unless the user explicitly asks to reuse it.
 
 ## Effect Types
 
@@ -37,7 +39,7 @@ Observed `colormodeselection` values:
 
 ## Multi-Segment Timeline Layers
 
-`fixtures/all.xml` shows a single normal layer containing multiple sequential effects. Preserve each effect node and its ordering:
+`all.xml` layer 6 shows a single normal layer containing multiple sequential effects. Preserve each effect node and its ordering:
 
 | segment | type | observed mode | start | duration |
 | ---: | ---: | --- | ---: | ---: |
@@ -50,6 +52,8 @@ Observed `colormodeselection` values:
 | 7 | 5 | Comet | 21000 | 3000 |
 | 8 | 6 | Starry Night | 24000 | 3000 |
 | 9 | 7 | Tide | 27000 | 2540 |
+
+The two Breathing segments are intentional. The first verifies random-color Breathing (`colormodeselection=2`), and the second verifies gradient Breathing (`colormodeselection=6`).
 
 When generating variants from a multi-segment template, prefer scalar edits to existing effect nodes:
 
@@ -76,4 +80,3 @@ For dual-color Breathing or Flash:
 - Set `d1r/d1g/d1b` to the first color.
 - Set `d2r/d2g/d2b` to the second color.
 - Preserve `colorPointList` and `gradientPointList`; they remain present in exported XML even when dual-color mode is active.
-
